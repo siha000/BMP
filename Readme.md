@@ -48,7 +48,7 @@ BMP
 typedef struct header
 {
     char name[2]; //'B'、'M'
-    unsigned int size; //54 + height*width
+    unsigned int size; //54 + height * width * 3
     int garbage;
     unsigned int image_offset; //預設54(因為開頭14byte + DIB 40byte)
 } header;
