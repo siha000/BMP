@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 #pragma pack(1)
+
 typedef struct BITMAP_header
 {
 	char name[2];
@@ -23,13 +25,11 @@ struct DIB_HEADER
 	unsigned int biClrUsed;
 	unsigned int biClrImportant;
 };
-	char RGB[1500][6000] = {0};
-	char record[1500][6000] = {0};
 
 int main()
 {
-	FILE *fp = fopen("car.bmp", "rb");
-	FILE *write = fopen("car1.bmp", "wb");
+	FILE *fp = fopen("Lenna.bmp", "rb");
+	FILE *write = fopen("Lenna1.bmp", "wb");
 	header text, text1;
 	struct DIB_HEADER dibheader, dibheader1;
 	fread(&text, sizeof(text), 1, fp);
@@ -40,22 +40,24 @@ int main()
 		   dibheader.header_size, dibheader.width, dibheader.height, dibheader.colorplanes, dibheader.bitsperpixel,
 		   dibheader.compression, dibheader.image_size, dibheader.biXPelsPerMeter, dibheader.biYPelsPerMeter,
 		   dibheader.biClrUsed, dibheader.biClrImportant);
+	int height = dibheader.height;
+	int width = dibheader.width;
 	printf("%d \n", sizeof(text));
-
-	fread(RGB, sizeof(char), dibheader.height * dibheader.width * 3, fp);
-	for (int c = 0; c < 1500; c++)
+	char *RGB = (char *)malloc(sizeof(char) * height * width * 3);
+	char *record = (char *)malloc(sizeof(char) * height * width * 3);
+	fread(RGB, sizeof(char), height * width * 3, fp);
+	for (int c = 0; c < height * width * 3; c+=3)
 	{
-		for (int d = 0; d < 2000 * 3; d += 3)
-		{
-			int temp = (RGB[c][d] + RGB[c][d + 1] + RGB[c][d + 2]) / 3;
-			record[c][d + 2] = record[c][d + 1] = record[c][d] = temp;
-		}
+		int temp = (RGB[c+1] + RGB[c+1] + RGB[c+2]) / 3;
+		record[c+2] = record[c+1] = record[c] = temp;
 	}
 
 	fwrite(&text, sizeof(text), 1, write);
 	fwrite(&dibheader, sizeof(dibheader), 1, write);
-	fwrite(RGB, sizeof(unsigned char), dibheader.height * dibheader.width * 3, write);
-
+	fwrite(record, sizeof(char), dibheader.height * dibheader.width * 3, write);
 	fclose(fp);
 	fclose(write);
+	free(RGB);
+	free(record);
+	
 }
