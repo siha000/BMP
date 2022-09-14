@@ -1,45 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#pragma pack(1)
-
-typedef struct BITMAP_header
-{
-	char name[2];
-	unsigned int size;
-	int garbage;
-	unsigned int image_offset;
-} header;
-
-struct DIB_HEADER
-{
-	unsigned int header_size;
-	unsigned int width;
-	unsigned int height;
-	unsigned short int colorplanes;
-	unsigned short int bitsperpixel;
-	unsigned int compression;
-	unsigned int image_size;
-	unsigned int biXPelsPerMeter;
-	unsigned int biYPelsPerMeter;
-	unsigned int biClrUsed;
-	unsigned int biClrImportant;
-};
+#include "TEXT.h"
 
 int main()
 {
-	FILE *fp = fopen("Lenna.bmp", "rb");
-	FILE *write = fopen("Lenna1.bmp", "wb");
-	header text, text1;
-	struct DIB_HEADER dibheader, dibheader1;
+	FILE *fp = fopen("cameraman.bmp", "rb");
+	FILE *write = fopen("cameraman1.bmp", "wb");
+	header text;
+	DIBHEADER dibheader;
 	fread(&text, sizeof(text), 1, fp);
-	printf("FIRST Two Char %c %c\n", text.name[0], text.name[1]);
-	printf("size :%d\n", text.size);
-	fread(&dibheader, sizeof(struct DIB_HEADER), 1, fp);
-	printf("header_size :%d\n width :%d\n height :%d\ncolor plane :%d\n bitsperpixel:%d\n compression :%d\n image_size :%d\n biXPelsPerMeter: %d \n biYPelsPerMeter :%d \n biClrUsed : %d \n biClrImportant :%d \n",
-		   dibheader.header_size, dibheader.width, dibheader.height, dibheader.colorplanes, dibheader.bitsperpixel,
-		   dibheader.compression, dibheader.image_size, dibheader.biXPelsPerMeter, dibheader.biYPelsPerMeter,
-		   dibheader.biClrUsed, dibheader.biClrImportant);
+	fread(&dibheader,sizeof(dibheader),1,fp);
 	int height = dibheader.height;
 	int width = dibheader.width;
 	printf("%d \n", sizeof(text));
