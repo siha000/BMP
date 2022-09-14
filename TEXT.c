@@ -23,8 +23,9 @@ struct DIB_HEADER
 	unsigned int biClrUsed;
 	unsigned int biClrImportant;
 };
-unsigned char RGB[1500][2000 * 3];
-unsigned char record[1500][2000 * 3];
+	char RGB[1500][6000] = {0};
+	char record[1500][6000] = {0};
+
 int main()
 {
 	FILE *fp = fopen("car.bmp", "rb");
@@ -40,6 +41,7 @@ int main()
 		   dibheader.compression, dibheader.image_size, dibheader.biXPelsPerMeter, dibheader.biYPelsPerMeter,
 		   dibheader.biClrUsed, dibheader.biClrImportant);
 	printf("%d \n", sizeof(text));
+
 	fread(RGB, sizeof(char), dibheader.height * dibheader.width * 3, fp);
 	for (int c = 0; c < 1500; c++)
 	{
