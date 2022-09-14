@@ -18,12 +18,16 @@ struct DIB_HEADER
 	unsigned short int bitsperpixel;
 	unsigned int compression;
 	unsigned int image_size;
+	unsigned int aaa;
+	unsigned int bbb;
+	unsigned int cc;
+	unsigned int ddd;
 };
-
 int main()
 {
 	FILE *fp=fopen("car.bmp","rb");
-	header text;
+	FILE *write=fopen("car1.bmp","wb");
+	header text; 
 	struct DIB_HEADER dibheader;
 	fread(&text,sizeof(text),1,fp);
 	//fread(&text.name,2,1,fp);
@@ -35,6 +39,21 @@ int main()
 	,dibheader.header_size,dibheader.width,dibheader.height,dibheader.colorplanes,
 	dibheader.bitsperpixel,dibheader.compression,dibheader.image_size);
 	printf("%d \n",sizeof(text));
+	unsigned char RGB[dibheader.height][dibheader.width*3];
+	unsigned char record[dibheader.height][dibheader.width*3];
+	fread(RGB,sizeof(char),dibheader.height*dibheader.width*3,fp);
+	for(int c=0;c<dibheader.height;c++)
+	{
+		for(int d=0;d<dibheader.width*3;d+=3)
+		{
+			record[c][d]=RGB[c][d];
+			record[c][d+1]=RGB[c][d+1];
+			record[c][d+2]=RGB[c][d+2];
+		}
+	}
+	fwrite(&text,sizeof(text),1,write);
+	fwrite(&dibheader,sizeof(dibheader),1,write);
+	fwrite(record,sizeof(char),dibheader.height*dibheader.width*3,write);
 	fclose(fp);
 
 }
