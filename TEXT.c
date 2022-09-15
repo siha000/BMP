@@ -4,8 +4,8 @@
 
 int main()
 {
-	FILE *fp = fopen("cameraman.bmp", "rb");
-	FILE *write = fopen("cameraman1.bmp", "wb");
+	FILE *fp = fopen("car.bmp", "rb");
+	FILE *write = fopen("car2.bmp", "wb");
 	header text;
 	DIBHEADER dibheader;
 	fread(&text, sizeof(text), 1, fp);

@@ -24,10 +24,3 @@ typedef struct DIB_HEADER
 	unsigned int biClrUsed;
 	unsigned int biClrImportant;
 }DIBHEADER;
-
-void open(char *read,char *write)
-{
-    FILE *READ=fopen(read,"rb");
-    FILE *WRITE=fopen(write,"wb");
-
-}
