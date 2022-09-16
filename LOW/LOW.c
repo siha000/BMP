@@ -10,18 +10,19 @@ int main()
 {
     FILE *read = fopen("colorbird.bmp", "rb");
     FILE *write = fopen("colorbird1.bmp", "wb");
-    header HEADER;
-    DIBHEADER dibheader;
+    header HEADER, HEADER1;
+    DIBHEADER dibheader, dibheader1;
     fread(&HEADER, sizeof(HEADER), 1, read);
     fread(&dibheader, sizeof(dibheader), 1, read);
     fread(RGB, sizeof(unsigned char), HEIGHT * WEIGHT * 3, read);
+    printf("%d %d \n", dibheader.height, dibheader.width);
     for (int c = 0; c < HEIGHT * 2; c += 2)
     {
         for (int d = 0; d < WEIGHT * 3 * 2; d += 6)
         {
-            record[c][d] = RGB[c][d];
-            record[c][d + 1] = RGB[c][d + 1];
-            record[c][d + 2] = RGB[c][d + 2];
+            record[c][d] = RGB[c / 2][d / 6];
+            record[c][d + 1] = RGB[c / 2][d / 6 + 1];
+            record[c][d + 2] = RGB[c / 2][d / 6 + 2];
         }
     }
 
@@ -36,9 +37,16 @@ int main()
             record[c - 1][d - 1] = (record[c - 1][d] + record[c - 1][d - 2]) / 2;
         }
     }
+
+    dibheader.height = HEIGHT * 2;
+    dibheader.width = WEIGHT * 2;
     fwrite(&HEADER, sizeof(HEADER), 1, write);
     fwrite(&dibheader, sizeof(dibheader), 1, write);
-    fwrite(RGB, sizeof(unsigned char), HEIGHT * WEIGHT * 3, write);
+    fwrite(record, sizeof(unsigned char), HEIGHT * WEIGHT * 3 * 2 * 2, write);
+
+    fread(&HEADER1, sizeof(HEADER1), 1, write);
+    fread(&dibheader1, sizeof(dibheader1), 1, write);
+    printf("%d %d \n", dibheader.height, dibheader.width);
     fclose(read);
     fclose(write);
     return 0;
