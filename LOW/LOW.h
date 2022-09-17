@@ -1,7 +1,7 @@
-#define HEIGHT 256
-#define WIDTH 256
-#define file_name "colorbird.bmp"
-#define file_save "colorbird1.bmp"
+#define HEIGHT 316
+#define WIDTH 316
+#define file_name "Lenna.bmp"
+#define file_save "Lenna1.bmp"
 char RGB[HEIGHT][WIDTH * 3];
 char record[HEIGHT + 2][WIDTH * 3 + 6];
 char result[HEIGHT][WIDTH * 3];
