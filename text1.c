@@ -1,39 +1,80 @@
-#include<stdio.h>
-#include<stdlib.h>
-#pragma pack(2)
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define HEIGHT 128
+#define WEIGHT 64
+#define PI 3.14159265
+#define val 180.0 / PI
+char RGB[HEIGHT][WEIGHT * 3];
+char record[HEIGHT + 2][WEIGHT * 3 + 6] = {0};
+char result[HEIGHT][WEIGHT * 3];
+char record_gamma[HEIGHT][WEIGHT * 3];
+double record_angle[HEIGHT][WEIGHT * 3];
+
+#pragma pack(1)
+
 typedef struct BITMAP_header
 {
 	char name[2];
 	unsigned int size;
 	int garbage;
 	unsigned int image_offset;
-}header;
+} header;
 
-struct DIB_HEADER
+typedef struct DIB_HEADER
 {
-	unsigned int header_size; //訊息頭資訊為40byte
-	unsigned int width; //寬度
-	unsigned int height; //高度
-	unsigned short int colorplanes; //顏色平面數通常為1
-	unsigned short int bitsperpixel; //像素數(檔案室彩色所以是24byte)
-	unsigned int compression; //檔案未經壓縮以0表示
-	unsigned int image_size;    //位圖像素大小
-};
+	unsigned int header_size;
+	unsigned int width;
+	unsigned int height;
+	unsigned short int colorplanes;
+	unsigned short int bitsperpixel;
+	unsigned int compression;
+	unsigned int image_size;
+	unsigned int biXPelsPerMeter;
+	unsigned int biYPelsPerMeter;
+	unsigned int biClrUsed;
+	unsigned int biClrImportant;
+} DIBHEADER;
 
 int main()
 {
-	FILE *fp=fopen("car.bmp","rb");
+	FILE *fp = fopen("colorbird1.bmp", "rb");
+	FILE *write = fopen("colorbird2.bmp", "wb");
 	header text;
-	struct DIB_HEADER dibheader;
-	fread(&text,sizeof(text),1,fp);
-    printf("size :%d\n",text.size);
-    printf("image_offset :%d \n",text.image_offset);
-	fread(&dibheader,sizeof(struct DIB_HEADER),1,fp);
-	printf("header_size :%d\n width :%d\n height :%d\ncolor plane :%d\n bitsperpixel:%d\n compression :%d\n image_size :%d\n"
-	,dibheader.header_size,dibheader.width,dibheader.height,dibheader.colorplanes,
-	dibheader.bitsperpixel,dibheader.compression,dibheader.image_size);
-	printf("%d \n",sizeof(text));
-    printf("%d \n",sizeof(dibheader));
-	fclose(fp);
+	DIBHEADER dibheader;
+	fread(&text, sizeof(text), 1, fp);
+	fread(&dibheader, sizeof(dibheader), 1, fp);
+	fread(&RGB, sizeof(char), HEIGHT * WEIGHT * 3, fp);
 
+	for (int c = 1; c < HEIGHT; c++)
+	{
+		for (int d = 3; d < WEIGHT * 3; d++)
+		{
+			record[c][d] = RGB[c - 1][d - 3];
+		}
+	}
+	for (int c = 1; c < HEIGHT; c++)
+	{
+		for (int d = 3; d < WEIGHT * 3; d++)
+		{
+			char record_y = record[c][d + 1] - record[c][d - 1];
+			char record_x = record[c + 1][d] - record[c - 1][d];
+			record_gamma[c - 1][d - 3] = (char)sqrt(((double)record_x * record_x) + ((double)record_y * record_y));
+			// record_angle[c - 1][d - 3] = atan((record_y) / (record_x)) * val;
+			//  printf("%lf\n",record_angle[c-1][d-3])   ;
+		}
+	}
+
+	for (int c = 0; c < HEIGHT; c++)
+	{
+		for (int d = 0; d < WEIGHT * 3; d++)
+		{
+			result[c][d] = record_gamma[c][d];
+		}
+	}
+	fwrite(&text, sizeof(text), 1, write);
+	fwrite(&dibheader, sizeof(dibheader), 1, write);
+	fwrite(result, sizeof(char), HEIGHT * WEIGHT * 3, write);
+	fclose(fp);
+	fclose(write);
 }
